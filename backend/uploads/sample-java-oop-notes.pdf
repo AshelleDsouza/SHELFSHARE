@@ -1,0 +1,51 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 807 >>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(Object-Oriented Programming with Java: Core Concepts) Tj
+/F1 14 Tf
+0 -30 Td
+(Classes, Interfaces, Generics, and Collections Framework) Tj
+/F1 11 Tf
+0 -25 Td
+(Author: Neha Deshmukh (B.Tech CSE) | ShelfShare Academic Resource) Tj
+0 -40 Td
+(--------------------------------------------------------------------------------) Tj
+0 -25 Td
+0 -18 Td (1. Java Platform: JVM, JRE, JDK architecture.) Tj
+0 -18 Td (2. Four Pillars of OOP: Abstraction, Encapsulation, Inheritance, Polymorphism.) Tj
+0 -18 Td (3. Abstract Classes vs Interfaces in Java 8+.) Tj
+0 -18 Td (4. Java Collections: ArrayList, LinkedList, HashMap, HashSet, PriorityQueue.) Tj
+0 -18 Td (5. Multithreading: Thread lifecycle, Runnable interface, Synchronization.) Tj
+0 -18 Td (6. Java Stream API and Lambda Expressions.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000224 00000 n 
+00000001087 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1157
+%%EOF

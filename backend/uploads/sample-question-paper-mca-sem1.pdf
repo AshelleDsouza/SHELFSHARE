@@ -1,0 +1,52 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 924 >>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(MCA Semester 1 Previous Year Question Paper (2025)) Tj
+/F1 14 Tf
+0 -30 Td
+(University Examination: Data Structures & Advanced Database Systems) Tj
+/F1 11 Tf
+0 -25 Td
+(Author: ShelfShare Academic Cell | ShelfShare Academic Resource) Tj
+0 -40 Td
+(--------------------------------------------------------------------------------) Tj
+0 -25 Td
+0 -18 Td (SECTION A: Answer any 5 questions 5 x 4 = 20 marks.) Tj
+0 -18 Td (Q1. Explain the time complexity of Quick Sort best, average, and worst cases.) Tj
+0 -18 Td (Q2. Differentiate between B-Tree and B+ Tree indexing.) Tj
+0 -18 Td (Q3. Explain ACID properties with a banking transfer example.) Tj
+0 -18 Td (SECTION B: Answer any 3 questions 3 x 10 = 30 marks.) Tj
+0 -18 Td (Q4. Construct an AVL tree by inserting keys: 15, 20, 24, 10, 13, 7, 30, 36, 25.) Tj
+0 -18 Td (Q5. Discuss Conflict Serializability and precedence graph algorithm with diagram.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000224 00000 n 
+00000001204 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1274
+%%EOF

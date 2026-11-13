@@ -1,0 +1,52 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 961 >>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(Computer Networks: OSI 7-Layer vs TCP/IP Architecture) Tj
+/F1 14 Tf
+0 -30 Td
+(Protocol stack, IP addressing, subnetting and routing algorithms) Tj
+/F1 11 Tf
+0 -25 Td
+(Author: Ananya Gupta (BCA) | ShelfShare Academic Resource) Tj
+0 -40 Td
+(--------------------------------------------------------------------------------) Tj
+0 -25 Td
+0 -18 Td (1. Overview of OSI Model: Physical, Data Link, Network, Transport, Session, Presentation, Application.) Tj
+0 -18 Td (2. TCP/IP Model and Comparison with OSI.) Tj
+0 -18 Td (3. Data Link Layer: Framing, Error Detection CRC, Flow Control Sliding Window.) Tj
+0 -18 Td (4. Network Layer: IPv4 vs IPv6 header format, CIDR notation and Subnetting.) Tj
+0 -18 Td (5. Routing Protocols: Distance Vector RIP vs Link State OSPF.) Tj
+0 -18 Td (6. Transport Layer: TCP 3-Way Handshake, Flow Control, Congestion Control vs UDP.) Tj
+0 -18 Td (7. Application Layer Protocols: HTTP, HTTPS, DNS, DHCP, FTP.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000224 00000 n 
+00000001241 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1311
+%%EOF

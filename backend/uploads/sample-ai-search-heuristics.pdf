@@ -1,0 +1,51 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 875 >>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(Artificial Intelligence: Heuristic Search & A* Algorithm) Tj
+/F1 14 Tf
+0 -30 Td
+(Lecture slides & step-by-step 8-puzzle problem walkthrough) Tj
+/F1 11 Tf
+0 -25 Td
+(Author: Vikram Singh (MCA) | ShelfShare Academic Resource) Tj
+0 -40 Td
+(--------------------------------------------------------------------------------) Tj
+0 -25 Td
+0 -18 Td (1. State Space Search formulation: Initial State, Actions, Goal Test, Path Cost.) Tj
+0 -18 Td (2. Uninformed Search: BFS, DFS, Uniform Cost Search, Iterative Deepening.) Tj
+0 -18 Td (3. Informed Search: Best-First Search and Heuristic Functions.) Tj
+0 -18 Td (4. A* Search: fn = gn + hn, Admissibility and Consistency of Heuristics.) Tj
+0 -18 Td (5. Adversarial Search: Minimax algorithm and Alpha-Beta Pruning.) Tj
+0 -18 Td (6. Knowledge Representation: First-Order Logic and Resolution theorem proving.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000224 00000 n 
+00000001155 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1225
+%%EOF

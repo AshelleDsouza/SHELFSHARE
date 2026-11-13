@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 1106 >>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(Data Structures: Binary Trees and Graph Algorithms) Tj
+/F1 14 Tf
+0 -30 Td
+(Complete Unit 3 Lecture Notes & Practice Problems) Tj
+/F1 11 Tf
+0 -25 Td
+(Author: Aarav Sharma (MCA) | ShelfShare Academic Resource) Tj
+0 -40 Td
+(--------------------------------------------------------------------------------) Tj
+0 -25 Td
+0 -18 Td (1. Introduction to Non-Linear Data Structures: Trees and Binary Trees.) Tj
+0 -18 Td (2. Tree Traversals: Pre-order, In-order, Post-order and Level-order.) Tj
+0 -18 Td (3. Binary Search Trees BST: Insertion, Deletion, and Searching complexity Oh.) Tj
+0 -18 Td (4. Balanced Search Trees: AVL Trees and Rotations LL, RR, LR, RL.) Tj
+0 -18 Td (5. Graph Representations: Adjacency Matrix vs Adjacency List.) Tj
+0 -18 Td (6. Graph Traversals: Depth First Search DFS using Stack and Breadth First Search BFS using Queue.) Tj
+0 -18 Td (7. Shortest Path Algorithms: Dijkstras Algorithm and Bellman-Ford.) Tj
+0 -18 Td (8. Minimum Spanning Trees: Kruskals and Prims greedy strategies.) Tj
+0 -18 Td (Practice Exercise: Implement AVL rotation check in C++ / Java.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000224 00000 n 
+00000001386 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1456
+%%EOF

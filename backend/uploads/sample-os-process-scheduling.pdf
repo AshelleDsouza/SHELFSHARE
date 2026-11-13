@@ -1,0 +1,52 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 969 >>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(Operating Systems: CPU Scheduling & Deadlock Management) Tj
+/F1 14 Tf
+0 -30 Td
+(Comprehensive revision guide for university exams) Tj
+/F1 11 Tf
+0 -25 Td
+(Author: Rohan Mehta (B.Tech CSE) | ShelfShare Academic Resource) Tj
+0 -40 Td
+(--------------------------------------------------------------------------------) Tj
+0 -25 Td
+0 -18 Td (1. Process States: New, Ready, Running, Waiting, Terminated.) Tj
+0 -18 Td (2. Process Control Block PCB and Context Switching overhead.) Tj
+0 -18 Td (3. Scheduling Criteria: CPU Utilization, Throughput, Turnaround, Waiting, and Response time.) Tj
+0 -18 Td (4. Algorithms: FCFS, SJF, Round Robin with Time Quantum, Priority Scheduling.) Tj
+0 -18 Td (5. Synchronization: Critical Section Problem, Pettersons Solution, Semaphores.) Tj
+0 -18 Td (6. Deadlock Conditions: Mutual Exclusion, Hold and Wait, No Preemption, Circular Wait.) Tj
+0 -18 Td (7. Deadlock Avoidance: Bankers Algorithm with Safety Check.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000224 00000 n 
+00000001249 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1319
+%%EOF

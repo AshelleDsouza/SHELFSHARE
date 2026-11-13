@@ -1,0 +1,51 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 864 >>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(Cyber Security & Cryptography: Symmetric vs Asymmetric) Tj
+/F1 14 Tf
+0 -30 Td
+(DES, AES, RSA, Hash Functions, and Network Defense) Tj
+/F1 11 Tf
+0 -25 Td
+(Author: Meera Iyer (B.Tech CSE) | ShelfShare Academic Resource) Tj
+0 -40 Td
+(--------------------------------------------------------------------------------) Tj
+0 -25 Td
+0 -18 Td (1. Information Security Triad: Confidentiality, Integrity, Availability CIA.) Tj
+0 -18 Td (2. Classical Ciphers: Caesar, Playfair, Hill Cipher, Vigenere.) Tj
+0 -18 Td (3. Symmetric Key Cryptography: DES structure and AES operation.) Tj
+0 -18 Td (4. Asymmetric Key Cryptography: Diffie-Hellman Key Exchange and RSA Algorithm.) Tj
+0 -18 Td (5. Message Authentication Codes MAC and SHA-256 Hashing.) Tj
+0 -18 Td (6. Common Attacks: Phishing, SQL Injection, Cross-Site Scripting XSS, Man-in-the-Middle.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000224 00000 n 
+00000001144 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1214
+%%EOF
