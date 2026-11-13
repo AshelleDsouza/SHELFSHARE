@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { pool } = require('../config/db');
+const storageService = require('../services/storageService');
 
 const uploadsDir = path.resolve(__dirname, '..', 'uploads');
 
@@ -296,12 +297,13 @@ async function createResource(req, res) {
       });
     }
 
-    // Extract file info
+    // Upload to persistent cloud storage (Cloudinary) or local fallback
+    const uploadResult = await storageService.uploadFile(req.file);
     const originalFileName = path.basename(req.file.originalname).replace(/[^a-zA-Z0-9._-]/g, '_');
-    const storedFileName = req.file.filename;
-    const relativeFilePath = path.join('uploads', storedFileName).replace(/\\/g, '/');
-    const fileType = path.extname(req.file.originalname).replace('.', '').toLowerCase();
-    const fileSize = req.file.size;
+    const storedFileName = uploadResult.stored_file_name;
+    const relativeFilePath = uploadResult.file_path;
+    const fileType = uploadResult.file_type;
+    const fileSize = uploadResult.file_size;
 
     // Insert resource record into MySQL
     const [result] = await pool.execute(
@@ -489,16 +491,9 @@ async function deleteResource(req, res) {
       });
     }
 
-    // Safely remove file on disk if not a shared demo file
+    // Safely remove file via storageService if not a shared demo file
     if (resource.stored_file_name && !resource.stored_file_name.startsWith('sample-')) {
-      const diskPath = path.join(uploadsDir, resource.stored_file_name);
-      if (fs.existsSync(diskPath)) {
-        try {
-          fs.unlinkSync(diskPath);
-        } catch (e) {
-          console.warn('[File Deletion Warning]', e.message);
-        }
-      }
+      await storageService.deleteFile(resource.stored_file_name, resource.file_path);
     }
 
     // Delete record from database (cascades related bookmarks, downloads, collection items, reviews)

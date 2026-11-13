@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const path = require('path');
 const { testConnection } = require('./config/db');
+const { initializeDatabase } = require('./utils/initDatabase');
 
 // Route Imports
 const authRoutes = require('./routes/authRoutes');
@@ -34,37 +35,97 @@ app.use(
 );
 
 // CORS Configuration
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5173',
+const configuredOrigins = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((url) => url.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
+const defaultOrigins = [
+  'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
 ];
+
+const allowedOrigins = [...new Set([...configuredOrigins, ...defaultOrigins])];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (like mobile apps, curl, or same-origin)
+      if (!origin) return callback(null, true);
+
+      const cleanOrigin = origin.replace(/\/+$/, '');
+
+      // Direct match in allowed list
+      if (allowedOrigins.includes(cleanOrigin)) {
         return callback(null, true);
       }
-      return callback(new Error('Blocked by CORS policy'));
+
+      // Allow any Vercel preview deployment for this project if on Vercel
+      if (
+        process.env.ALLOW_ALL_VERCEL_PREVIEWS === 'true' ||
+        process.env.VERCEL ||
+        cleanOrigin.endsWith('.vercel.app')
+      ) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`Blocked by CORS policy for origin: ${origin}`));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['Content-Disposition'],
   })
 );
+
+// Handle preflight OPTIONS requests across all routes
+app.options('*', cors());
 
 // Body and Cookie Parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser(process.env.COOKIE_SECRET || 'shelfshare_cookie_secret_key_2026'));
 
-// Health check endpoint
-app.get('/api/health', async (req, res) => {
+// Root Endpoint - Identifies API and directs to documentation and health
+app.get('/', (req, res) => {
   res.status(200).json({
-    status: 'healthy',
+    success: true,
+    name: 'ShelfShare – Student Academic Resource Sharing API',
+    tagline: 'Learn. Share. Grow.',
+    status: 'operational',
+    environment: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString(),
-    message: 'ShelfShare Backend API is running smoothly',
+    endpoints: {
+      health: '/health',
+      api_health: '/api/health',
+      public_stats: '/api/public/stats',
+      resources: '/api/resources',
+      auth: '/api/auth',
+    },
   });
 });
+
+// Dynamic Health Check Handlers (Safe MySQL Probe)
+const healthHandler = async (req, res) => {
+  const dbStatus = await testConnection();
+  const statusCode = dbStatus.connected ? 200 : 503;
+  res.status(statusCode).json({
+    status: dbStatus.connected ? 'healthy' : 'degraded',
+    timestamp: new Date().toISOString(),
+    service: 'ShelfShare REST API',
+    environment: process.env.NODE_ENV || 'development',
+    database: {
+      status: dbStatus.connected ? 'connected' : 'disconnected',
+      message: dbStatus.message,
+      target: dbStatus.database,
+    },
+  });
+};
+
+app.get('/health', healthHandler);
+app.get('/api/health', healthHandler);
 
 // API Routes
 app.use('/api/public', publicRoutes);
@@ -123,6 +184,9 @@ app.use((err, req, res, next) => {
 // Start Server only when executed directly (not when required by tests)
 async function startServer() {
   await testConnection();
+  if (process.env.AUTO_INIT_DB !== 'false') {
+    initializeDatabase().catch((err) => console.warn('[Auto DB Init Notice]', err.message));
+  }
   return app.listen(PORT, () => {
     console.log(`[Server] ShelfShare API running on http://localhost:${PORT}`);
   });

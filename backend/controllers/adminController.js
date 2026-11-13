@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { pool } = require('../config/db');
+const storageService = require('../services/storageService');
 
 const uploadsDir = path.resolve(__dirname, '..', 'uploads');
 
@@ -320,14 +321,9 @@ async function adminDeleteResource(req, res) {
 
     const resource = rows[0];
 
-    // Safely remove file on disk if not a shared demo file
+    // Safely remove file via storageService if not a shared demo file
     if (resource.stored_file_name && !resource.stored_file_name.startsWith('sample-')) {
-      const diskPath = path.join(uploadsDir, resource.stored_file_name);
-      if (fs.existsSync(diskPath)) {
-        try {
-          fs.unlinkSync(diskPath);
-        } catch (e) {}
-      }
+      await storageService.deleteFile(resource.stored_file_name, resource.file_path);
     }
 
     await pool.execute('DELETE FROM resources WHERE id = ?', [resourceId]);

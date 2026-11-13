@@ -110,33 +110,63 @@ export default function LandingPage() {
                 </div>
 
                 <div style={styles.mockupResourceList}>
-                  <div style={styles.mockupResourceItem}>
-                    <div style={styles.mockupBadge}>MCA Sem 1</div>
-                    <div style={{ flex: 1 }}>
-                      <p style={styles.mockupResTitle}>Binary Trees & AVL Rotations Complete Guide</p>
-                      <p style={styles.mockupResMeta}>Aarav Sharma &bull; 42 downloads &bull; ★ 4.8</p>
+                  {loading ? (
+                    // Clean skeleton placeholder
+                    [1, 2, 3].map((n) => (
+                      <div key={n} style={{ ...styles.mockupResourceItem, opacity: 0.6 }}>
+                        <div style={styles.mockupBadge}>Loading...</div>
+                        <div style={{ flex: 1 }}>
+                          <p style={styles.mockupResTitle}>Fetching academic materials...</p>
+                          <p style={styles.mockupResMeta}>Connecting to database...</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : featuredResources.length > 0 ? (
+                    featuredResources.slice(0, 3).map((resItem, idx) => (
+                      <Link
+                        key={resItem.id}
+                        to={`/resources/${resItem.id}`}
+                        style={{
+                          ...styles.mockupResourceItem,
+                          textDecoration: 'none',
+                          color: 'inherit',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <div
+                          style={{
+                            ...styles.mockupBadge,
+                            backgroundColor:
+                              idx === 1
+                                ? 'var(--accent-light)'
+                                : idx === 2
+                                ? 'var(--secondary-light)'
+                                : 'var(--bg-main)',
+                          }}
+                        >
+                          {resItem.course_code ? `${resItem.course_code} Sem ${resItem.semester_number || 1}` : 'Academic'}
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ ...styles.mockupResTitle, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {resItem.title}
+                          </p>
+                          <p style={styles.mockupResMeta}>
+                            {resItem.uploader_name || 'Verified Student'} &bull; {resItem.download_count || 0} downloads &bull; ★ {resItem.average_rating ? Number(resItem.average_rating).toFixed(1) : '5.0'}
+                          </p>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                      <BookOpen size={28} style={{ margin: '0 auto 0.5rem', opacity: 0.4 }} />
+                      <p style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--primary)' }}>
+                        Academic Library Initialized
+                      </p>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
+                        No study materials uploaded yet. Be the first to share notes!
+                      </p>
                     </div>
-                  </div>
-
-                  <div style={styles.mockupResourceItem}>
-                    <div style={{ ...styles.mockupBadge, backgroundColor: 'var(--accent-light)' }}>
-                      MCA Sem 1
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <p style={styles.mockupResTitle}>Relational Normalization & ACID Transactions</p>
-                      <p style={styles.mockupResMeta}>Priya Patel &bull; 38 downloads &bull; ★ 4.6</p>
-                    </div>
-                  </div>
-
-                  <div style={styles.mockupResourceItem}>
-                    <div style={{ ...styles.mockupBadge, backgroundColor: 'var(--secondary-light)' }}>
-                      BCA Sem 4
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <p style={styles.mockupResTitle}>Python Practical Lab Manual with Pandas</p>
-                      <p style={styles.mockupResMeta}>Karan Verma &bull; 64 downloads &bull; ★ 4.9</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

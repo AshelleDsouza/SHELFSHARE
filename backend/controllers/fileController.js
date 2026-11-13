@@ -37,6 +37,11 @@ async function previewResource(req, res) {
       });
     }
 
+    // Cloudinary / Remote persistent URL
+    if (resource.file_path && resource.file_path.startsWith('http')) {
+      return res.redirect(resource.file_path);
+    }
+
     // Prevent directory traversal: verify target path is inside uploads directory
     const resolvedPath = path.resolve(uploadsDir, resource.stored_file_name);
     if (!resolvedPath.startsWith(uploadsDir)) {
@@ -87,6 +92,23 @@ async function downloadResource(req, res) {
         success: false,
         message: 'This resource is currently not available for download.',
       });
+    }
+
+    // Check if hosted on Cloudinary / Remote URL
+    if (resource.file_path && resource.file_path.startsWith('http')) {
+      // Atomic increment of download count in MySQL
+      await pool.execute(
+        'UPDATE resources SET download_count = download_count + 1 WHERE id = ?',
+        [resourceId]
+      );
+
+      // Record authenticated download in downloads table
+      await pool.execute(
+        'INSERT INTO downloads (user_id, resource_id, downloaded_at) VALUES (?, ?, NOW())',
+        [userId, resourceId]
+      );
+
+      return res.redirect(resource.file_path);
     }
 
     // Validate path to prevent directory traversal

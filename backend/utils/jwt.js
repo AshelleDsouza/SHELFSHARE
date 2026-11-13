@@ -38,7 +38,7 @@ function setAuthCookie(res, token) {
   res.cookie('shelfshare_token', token, {
     httpOnly: true,
     secure: isProduction, // HTTPS in production
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
     path: '/',
   });
@@ -52,7 +52,7 @@ function clearAuthCookie(res) {
   res.cookie('shelfshare_token', '', {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: isProduction ? 'none' : 'lax',
     expires: new Date(0),
     path: '/',
   });

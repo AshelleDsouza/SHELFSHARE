@@ -30,6 +30,9 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
     if (res.data && res.data.success) {
+      if (res.data.token) {
+        localStorage.setItem('shelfshare_token', res.data.token);
+      }
       setUser(res.data.user);
       return res.data;
     }
@@ -39,6 +42,9 @@ export function AuthProvider({ children }) {
   const register = async (userData) => {
     const res = await api.post('/auth/register', userData);
     if (res.data && res.data.success) {
+      if (res.data.token) {
+        localStorage.setItem('shelfshare_token', res.data.token);
+      }
       setUser(res.data.user);
       return res.data;
     }
@@ -51,6 +57,7 @@ export function AuthProvider({ children }) {
     } catch (e) {
       console.error('Logout error:', e);
     } finally {
+      localStorage.removeItem('shelfshare_token');
       setUser(null);
     }
   };

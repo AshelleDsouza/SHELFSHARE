@@ -1,12 +1,5 @@
 const multer = require('multer');
 const path = require('path');
-const crypto = require('crypto');
-const fs = require('fs');
-
-const uploadsDir = path.resolve(__dirname, '..', 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 // Allowed MIME types and extensions
 const ALLOWED_MIME_TYPES = new Set([
@@ -20,18 +13,9 @@ const ALLOWED_MIME_TYPES = new Set([
 
 const ALLOWED_EXTENSIONS = new Set(['.pdf', '.doc', '.docx', '.ppt', '.pptx']);
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadsDir);
-  },
-  filename: (req, file, cb) => {
-    // Generate secure random server-side filename, preserving safe extension
-    const ext = path.extname(file.originalname).toLowerCase();
-    const randomHex = crypto.randomBytes(16).toString('hex');
-    const safeStoredName = `${Date.now()}-${randomHex}${ext}`;
-    cb(null, safeStoredName);
-  },
-});
+// Memory storage is optimal for serverless environments (e.g. Vercel)
+// Files are held in memory buffer and streamed to Cloudinary or written locally
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
