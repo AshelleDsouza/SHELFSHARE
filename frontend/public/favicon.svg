@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <rect width="64" height="64" rx="14" fill="#172C40"/>
+  <!-- Open Academic Book Icon -->
+  <path d="M14 20C18 19 26 19 32 23C38 19 46 19 50 20V45C45 44 38 44 32 47C26 44 19 44 14 45V20Z" fill="#A9C9B8" fill-opacity="0.25" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M32 23V47" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  <!-- Bookmark Ribbon / Shelf line in Sage Green -->
+  <path d="M22 25C25 24.5 29 25 32 27" stroke="#A9C9B8" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M42 25C39 24.5 35 25 32 27" stroke="#A9C9B8" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M22 32C25 31.5 29 32 32 34" stroke="#A9C9B8" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M42 32C39 31.5 35 32 32 34" stroke="#A9C9B8" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

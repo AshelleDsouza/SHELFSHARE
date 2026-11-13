@@ -48,7 +48,7 @@ ShelfShare organizes college study materials by **Course**, **Semester**, **Subj
 | **Backend** | Node.js, Express.js (REST API), JWT, bcryptjs, Multer, Helmet, CORS, cookie-parser |
 | **Database** | MySQL Server 9.7 (InnoDB), `mysql2/promise` connection pool |
 | **Storage** | Dedicated local secure directory (`backend/uploads/`) with cryptographic filename hashing |
-| **Testing** | Node.js Test Runner (`node:test`, `node:assert/strict`) — 9 Suites, 54 Automated Tests |
+| **Testing** | Node.js Test Runner (`node:test`, `node:assert/strict`) — 10 Suites, 77 Automated Tests |
 
 ---
 
@@ -200,7 +200,7 @@ The database comes pre-seeded with complete sample accounts, real PDF/DOCX sampl
 
 ## 9. Automated Testing Suite
 
-The backend includes 9 test suites with **54 automated test cases** covering every functional requirement:
+The backend includes 10 test suites with **77 automated test cases** covering every functional and security requirement:
 
 ```bash
 cd backend
@@ -217,6 +217,7 @@ npm test
 7. `recommendation.test.js`: Curriculum-aware recommendation engine ranking and score verification.
 8. `admin.test.js`: RBAC checks (403 for students), admin metrics, user status toggles, report moderation.
 9. `user_notification.test.js`: User profile aggregate metrics, profile updates, notification unread tracking, mark-as-read flows.
+10. `e2e_comprehensive_audit.test.js`: Full end-to-end audit (23 tests) verifying password hashing in MySQL, token tampering rejection, RBAC cross-role boundaries, executable upload rejections, directory traversal protection, atomic MySQL counters, collection lifecycle, reviews upsert, and admin workflows.
 
 ---
 
