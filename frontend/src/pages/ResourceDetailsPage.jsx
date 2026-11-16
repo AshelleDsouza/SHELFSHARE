@@ -115,16 +115,14 @@ export default function ResourceDetailsPage() {
 
     try {
       setDownloading(true);
-      // Trigger authenticated download endpoint (which increments download counter in MySQL)
-      const downloadUrl = `${import.meta.env.VITE_API_BASE_URL || '/api'}/resources/${id}/download`;
-
-      // Use an anchor tag or direct window download
       const response = await api.get(`/resources/${id}/download`, { responseType: 'blob' });
-      const blob = new Blob([response.data], { type: response.headers['content-type'] });
+      const contentType = response.headers['content-type'] || 'application/pdf';
+      const blob = new Blob([response.data], { type: contentType });
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;
-      link.setAttribute('download', resource.file_name);
+      const fileName = resource.file_name || 'document.pdf';
+      link.setAttribute('download', fileName);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -134,7 +132,15 @@ export default function ResourceDetailsPage() {
       // Increment local count
       setResource((prev) => ({ ...prev, download_count: (prev.download_count || 0) + 1 }));
     } catch (err) {
-      showToast(err.message || 'Failed to download document.', 'error');
+      let msg = err.message || 'Failed to download document.';
+      if (err.response && err.response.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const parsed = JSON.parse(text);
+          if (parsed.message) msg = parsed.message;
+        } catch (_) {}
+      }
+      showToast(msg, 'error');
     } finally {
       setDownloading(false);
     }
@@ -222,7 +228,8 @@ export default function ResourceDetailsPage() {
   }
 
   const isPdf = resource.file_type?.toLowerCase() === 'pdf';
-  const previewUrl = `${import.meta.env.VITE_API_BASE_URL || '/api'}/resources/${id}/preview`;
+  const apiBase = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '');
+  const previewUrl = `${apiBase}/resources/${id}/preview`;
 
   return (
     <div style={styles.page}>

@@ -45,7 +45,7 @@ api.interceptors.request.use(
 // Response interceptor: Extract human-readable error messages and handle session expiry
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     // If session expired or unauthorized, clear token from localStorage
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('shelfshare_token');
@@ -53,7 +53,17 @@ api.interceptors.response.use(
 
     let errorMessage = 'An unexpected network error occurred. Please check your connection.';
     if (error.response && error.response.data) {
-      errorMessage = error.response.data.message || errorMessage;
+      if (typeof error.response.data === 'string') {
+        errorMessage = error.response.data;
+      } else if (error.response.data.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response.data instanceof Blob) {
+        try {
+          const text = await error.response.data.text();
+          const parsed = JSON.parse(text);
+          if (parsed.message) errorMessage = parsed.message;
+        } catch (_) {}
+      }
     } else if (error.message) {
       errorMessage = error.message;
     }
