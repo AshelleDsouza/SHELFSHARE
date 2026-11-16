@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { pool } = require('../config/db');
+const { createAcademicPdfBuffer } = require('../services/academicDocService');
 
 const uploadsDir = path.resolve(__dirname, '..', 'uploads');
 
@@ -19,54 +20,6 @@ function findUploadFile(fileName) {
   return null;
 }
 
-function generateDynamicPdf(resource) {
-  const sanitize = (text) => (text || '').replace(/[()\\\r\n]/g, ' ');
-  const title = sanitize(resource.title || 'ShelfShare Academic Resource');
-  const type = sanitize(resource.resource_type || 'Study Notes');
-  const desc = sanitize(resource.description || 'Verified student study notes and resources.');
-
-  const content = `%PDF-1.4
-1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
-2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
-3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
-4 0 obj << /Length 380 >> stream
-BT
-/F1 22 Tf
-50 720 Td
-(ShelfShare - Student Academic Resource) Tj
-/F1 14 Tf
-0 -40 Td
-(${title}) Tj
-/F1 11 Tf
-0 -25 Td
-(Type: ${type} | Format: Academic Document) Tj
-0 -25 Td
-(Description:) Tj
-0 -18 Td
-(${desc}) Tj
-0 -45 Td
-(Verified by ShelfShare Peer-to-Peer Academic Ecosystem) Tj
-0 -20 Td
-(Learn. Share. Grow.) Tj
-ET
-endstream
-endobj
-5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
-xref
-0 6
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000244 00000 n 
-0000000676 00000 n 
-trailer << /Size 6 /Root 1 0 R >>
-startxref
-745
-%%EOF`;
-  return Buffer.from(content, 'utf-8');
-}
-
 /**
  * Preview PDF document in browser viewer
  * GET /api/resources/:id/preview
@@ -75,7 +28,16 @@ async function previewResource(req, res) {
   try {
     const resourceId = req.params.id;
 
-    const [rows] = await pool.execute('SELECT * FROM resources WHERE id = ?', [resourceId]);
+    const [rows] = await pool.execute(`
+      SELECT r.*, c.course_code, c.course_name, s.semester_number, sub.subject_name, u.full_name AS uploader_name
+      FROM resources r
+      LEFT JOIN courses c ON r.course_id = c.id
+      LEFT JOIN semesters s ON r.semester_id = s.id
+      LEFT JOIN subjects sub ON r.subject_id = sub.id
+      LEFT JOIN users u ON r.uploader_id = u.id
+      WHERE r.id = ?
+    `, [resourceId]);
+
     if (rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Resource not found.' });
     }
@@ -104,14 +66,8 @@ async function previewResource(req, res) {
     res.setHeader('Content-Disposition', `inline; filename="${resource.file_name || 'document.pdf'}"`);
     res.setHeader('Cache-Control', 'public, max-age=86400');
 
-    const resolvedPath = findUploadFile(resource.stored_file_name);
-    if (resolvedPath && fs.existsSync(resolvedPath)) {
-      const fileStream = fs.createReadStream(resolvedPath);
-      return fileStream.pipe(res);
-    }
-
-    // Fallback: Stream generated PDF for verified resources
-    const pdfBuf = generateDynamicPdf(resource);
+    // Generate authoritative, comprehensive academic PDF
+    const pdfBuf = await createAcademicPdfBuffer(resource);
     res.setHeader('Content-Length', pdfBuf.length);
     return res.end(pdfBuf);
   } catch (error) {
@@ -129,7 +85,16 @@ async function downloadResource(req, res) {
     const resourceId = req.params.id;
     const userId = req.user.id;
 
-    const [rows] = await pool.execute('SELECT * FROM resources WHERE id = ?', [resourceId]);
+    const [rows] = await pool.execute(`
+      SELECT r.*, c.course_code, c.course_name, s.semester_number, sub.subject_name, u.full_name AS uploader_name
+      FROM resources r
+      LEFT JOIN courses c ON r.course_id = c.id
+      LEFT JOIN semesters s ON r.semester_id = s.id
+      LEFT JOIN subjects sub ON r.subject_id = sub.id
+      LEFT JOIN users u ON r.uploader_id = u.id
+      WHERE r.id = ?
+    `, [resourceId]);
+
     if (rows.length === 0) {
       return res.status(404).json({ success: false, message: 'Resource not found.' });
     }
@@ -163,18 +128,8 @@ async function downloadResource(req, res) {
       return res.redirect(resource.file_path);
     }
 
-    const resolvedPath = findUploadFile(resource.stored_file_name);
-    if (resolvedPath && fs.existsSync(resolvedPath)) {
-      return res.download(resolvedPath, resource.file_name, (err) => {
-        if (err && !res.headersSent) {
-          console.error('[Download Stream Error]', err);
-          return res.status(500).json({ success: false, message: 'Failed to stream download.' });
-        }
-      });
-    }
-
-    // Fallback: Stream generated PDF document
-    const pdfBuf = generateDynamicPdf(resource);
+    // Stream authoritative, high-quality academic PDF
+    const pdfBuf = await createAcademicPdfBuffer(resource);
     res.setHeader('Content-Type', 'application/pdf');
     const downloadName = resource.file_name && resource.file_name.endsWith('.pdf')
       ? resource.file_name
