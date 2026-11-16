@@ -272,20 +272,73 @@ async function initializeDatabase() {
       `);
     }
 
-    // Check default admin account
-    const [admins] = await pool.query("SELECT COUNT(*) AS count FROM users WHERE role = 'admin'");
-    if (admins[0].count === 0) {
-      console.log('[DB Init] Seeding default administrator account...');
-      await pool.query(`
-        INSERT INTO users (full_name, email, password_hash, college_name, course_id, semester_id, role, account_status)
-        VALUES (
-          'System Administrator',
-          'admin@shelfshare.edu',
-          '$2b$10$JT1G8COkWhwOwVCIFe703.hweBvdafolgDq0fzdYFfrdwMVdqJTTK',
-          'National Institute of Technology',
-          1, 4, 'admin', 'active'
-        );
-      `);
+    // Seed users, resources, reviews, downloads, bookmarks if empty
+    try {
+      const seedData = require('./seedData.json');
+      
+      // 1. Seed Student Peers
+      if (seedData.users && seedData.users.length > 0) {
+        console.log('[DB Init] Seeding student peer accounts...');
+        for (const user of seedData.users) {
+          await pool.execute(
+            `INSERT INTO users (id, full_name, email, password_hash, college_name, course_id, semester_id, role, account_status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+             ON DUPLICATE KEY UPDATE full_name = VALUES(full_name)`,
+            [user.id, user.full_name, user.email, user.password_hash, user.college_name, user.course_id, user.semester_id, user.role, user.account_status]
+          );
+        }
+      }
+
+      // 2. Seed Resources
+      const [resCount] = await pool.query('SELECT COUNT(*) as c FROM resources');
+      if (resCount[0].c === 0 && seedData.resources) {
+        console.log('[DB Init] Seeding 22 real academic resources...');
+        for (const r of seedData.resources) {
+          await pool.execute(
+            `INSERT INTO resources (id, title, description, course_id, semester_id, subject_id, unit_name, resource_type, tags, file_name, stored_file_name, file_path, file_type, file_size, uploader_id, academic_year, download_count, average_rating, total_reviews, moderation_status, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [r.id, r.title, r.description, r.course_id, r.semester_id, r.subject_id, r.unit_name, r.resource_type, r.tags, r.file_name, r.stored_file_name, r.file_path, r.file_type, r.file_size, r.uploader_id, r.academic_year, r.download_count, r.average_rating, r.total_reviews, r.moderation_status, r.created_at, r.updated_at]
+          );
+        }
+      }
+
+      // 3. Seed Reviews
+      const [revCount] = await pool.query('SELECT COUNT(*) as c FROM reviews');
+      if (revCount[0].c === 0 && seedData.reviews) {
+        for (const rev of seedData.reviews) {
+          await pool.execute(
+            `INSERT INTO reviews (id, resource_id, user_id, rating, comment, created_at)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [rev.id, rev.resource_id, rev.user_id, rev.rating, rev.comment, rev.created_at]
+          );
+        }
+      }
+
+      // 4. Seed Downloads
+      const [dlCount] = await pool.query('SELECT COUNT(*) as c FROM downloads');
+      if (dlCount[0].c === 0 && seedData.downloads) {
+        for (const dl of seedData.downloads) {
+          await pool.execute(
+            `INSERT INTO downloads (id, resource_id, user_id, downloaded_at)
+             VALUES (?, ?, ?, ?)`,
+            [dl.id, dl.resource_id, dl.user_id, dl.downloaded_at]
+          );
+        }
+      }
+
+      // 5. Seed Bookmarks
+      const [bmCount] = await pool.query('SELECT COUNT(*) as c FROM bookmarks');
+      if (bmCount[0].c === 0 && seedData.bookmarks) {
+        for (const bm of seedData.bookmarks) {
+          await pool.execute(
+            `INSERT INTO bookmarks (id, user_id, resource_id, created_at)
+             VALUES (?, ?, ?, ?)`,
+            [bm.id, bm.user_id, bm.resource_id, bm.created_at]
+          );
+        }
+      }
+    } catch (seedErr) {
+      console.warn('[DB Init Seed Notice]', seedErr.message);
     }
   } catch (err) {
     console.error('[DB Init Seeding Error]', err.message);
