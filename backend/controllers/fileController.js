@@ -190,14 +190,6 @@ async function downloadResource(req, res) {
     });
   }
 }
-  } catch (error) {
-    console.error('[Download Resource Error]', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Failed to process download request.',
-    });
-  }
-}
 
 /**
  * Get student's download history
