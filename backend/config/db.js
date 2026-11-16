@@ -29,9 +29,11 @@ function createDatabasePool() {
     : undefined;
 
   if (connectionUri) {
+    // If the user inadvertently connected to 'sys' (MySQL system catalog), redirect to default user database 'test'
+    let sanitizedUri = connectionUri.replace(/\/sys(\?|$)/, '/test$1');
     console.log('[Database] Initializing MySQL pool from connection URI...');
     return mysql.createPool({
-      uri: connectionUri,
+      uri: sanitizedUri,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,

@@ -231,61 +231,64 @@ async function initializeDatabase() {
   }
 
   // Check and seed default academic programs if empty
-  const [courses] = await pool.query('SELECT COUNT(*) AS count FROM courses');
-  if (courses[0].count === 0) {
-    console.log('[DB Init] Seeding baseline courses, semesters, and subjects...');
-    // Seed Courses
-    await pool.query(`
-      INSERT INTO courses (id, course_code, course_name) VALUES
-      (1, 'MCA', 'Master of Computer Applications'),
-      (2, 'BCA', 'Bachelor of Computer Applications'),
-      (3, 'BTECH-CS', 'B.Tech in Computer Science and Engineering');
-    `);
+  try {
+    const [courses] = await pool.query('SELECT COUNT(*) AS count FROM courses');
+    if (courses[0].count === 0) {
+      console.log('[DB Init] Seeding baseline courses, semesters, and subjects...');
+      // Seed Courses
+      await pool.query(`
+        INSERT INTO courses (id, course_code, course_name) VALUES
+        (1, 'MCA', 'Master of Computer Applications'),
+        (2, 'BCA', 'Bachelor of Computer Applications'),
+        (3, 'BTECH-CS', 'B.Tech in Computer Science and Engineering');
+      `);
 
-    // Seed Semesters
-    await pool.query(`
-      INSERT INTO semesters (id, course_id, semester_number) VALUES
-      (1, 1, 1), (2, 1, 2), (3, 1, 3), (4, 1, 4),
-      (5, 2, 1), (6, 2, 2), (7, 2, 3), (8, 2, 4), (9, 2, 5), (10, 2, 6),
-      (11, 3, 1), (12, 3, 2), (13, 3, 3), (14, 3, 4), (15, 3, 5), (16, 3, 6), (17, 3, 7), (18, 3, 8);
-    `);
+      // Seed Semesters
+      await pool.query(`
+        INSERT INTO semesters (id, course_id, semester_number) VALUES
+        (1, 1, 1), (2, 1, 2), (3, 1, 3), (4, 1, 4),
+        (5, 2, 1), (6, 2, 2), (7, 2, 3), (8, 2, 4), (9, 2, 5), (10, 2, 6),
+        (11, 3, 1), (12, 3, 2), (13, 3, 3), (14, 3, 4), (15, 3, 5), (16, 3, 6), (17, 3, 7), (18, 3, 8);
+      `);
 
-    // Seed Core Subjects
-    await pool.query(`
-      INSERT INTO subjects (id, course_id, semester_id, subject_name, subject_code, description) VALUES
-      (1, 1, 1, 'Data Structures and Algorithms', 'MCA101', 'Advanced algorithmic design, trees, graphs, dynamic programming, and complexity analysis.'),
-      (2, 1, 1, 'Advanced Database Management Systems', 'MCA102', 'Relational theory, normalization, ACID compliance, transactions, indexing, and query optimization.'),
-      (3, 1, 2, 'Operating Systems and Systems Programming', 'MCA201', 'Concurrency, process management, memory virtualisation, and file systems.'),
-      (4, 1, 2, 'Software Engineering and Agile Methodologies', 'MCA202', 'Agile development, Scrum, software architecture, testing methodologies, and CI/CD pipelines.'),
-      (5, 1, 3, 'Artificial Intelligence and Machine Learning', 'MCA301', 'Heuristic search, supervised learning, neural networks, and natural language processing.'),
-      (6, 1, 3, 'Web Technologies and Full-Stack Development', 'MCA302', 'Modern JavaScript architectures, React, Node.js, Express REST APIs, and microservices.'),
-      (7, 2, 1, 'Programming in C and Problem Solving', 'BCA101', 'Pointers, memory allocation, modular programming, structures, and file I/O.'),
-      (8, 2, 2, 'Object-Oriented Programming with C++', 'BCA201', 'Classes, objects, inheritance, polymorphism, templates, and exception handling.'),
-      (9, 2, 3, 'Java Programming and Object-Oriented Design', 'BCA301', 'Core Java, collections framework, multithreading, and stream APIs.'),
-      (10, 2, 4, 'Python for Data Science', 'BCA401', 'Data structures, NumPy, Pandas, visualization, and exploratory data analysis.'),
-      (11, 3, 3, 'Computer Networks and Protocols', 'CS301', 'OSI model, TCP/IP stack, routing protocols, and socket programming.'),
-      (12, 3, 5, 'Network Security and Cryptography', 'CS501', 'Symmetric and asymmetric encryption, RSA, hashing, and digital signatures.'),
-      (13, 3, 6, 'Compiler Design', 'CS601', 'Lexical analysis, parsing, semantic analysis, and code generation.'),
-      (14, 1, 4, 'Cloud Computing and DevOps', 'MCA401', 'CI/CD pipelines, containerization with Docker, Kubernetes, and cloud infrastructure.'),
-      (15, 3, 4, 'Design and Analysis of Algorithms', 'CS401', 'Divide and conquer, greedy strategies, dynamic programming, and graph algorithms.');
-    `);
-  }
+      // Seed Core Subjects
+      await pool.query(`
+        INSERT INTO subjects (id, course_id, semester_id, subject_name, subject_code, description) VALUES
+        (1, 1, 1, 'Data Structures and Algorithms', 'MCA101', 'Advanced algorithmic design, trees, graphs, dynamic programming, and complexity analysis.'),
+        (2, 1, 1, 'Advanced Database Management Systems', 'MCA102', 'Relational theory, normalization, ACID compliance, transactions, indexing, and query optimization.'),
+        (3, 1, 2, 'Operating Systems and Systems Programming', 'MCA201', 'Concurrency, process management, memory virtualisation, and file systems.'),
+        (4, 1, 2, 'Software Engineering and Agile Methodologies', 'MCA202', 'Agile development, Scrum, software architecture, testing methodologies, and CI/CD pipelines.'),
+        (5, 1, 3, 'Artificial Intelligence and Machine Learning', 'MCA301', 'Heuristic search, supervised learning, neural networks, and natural language processing.'),
+        (6, 1, 3, 'Web Technologies and Full-Stack Development', 'MCA302', 'Modern JavaScript architectures, React, Node.js, Express REST APIs, and microservices.'),
+        (7, 2, 1, 'Programming in C and Problem Solving', 'BCA101', 'Pointers, memory allocation, modular programming, structures, and file I/O.'),
+        (8, 2, 2, 'Object-Oriented Programming with C++', 'BCA201', 'Classes, objects, inheritance, polymorphism, templates, and exception handling.'),
+        (9, 2, 3, 'Java Programming and Object-Oriented Design', 'BCA301', 'Core Java, collections framework, multithreading, and stream APIs.'),
+        (10, 2, 4, 'Python for Data Science', 'BCA401', 'Data structures, NumPy, Pandas, visualization, and exploratory data analysis.'),
+        (11, 3, 3, 'Computer Networks and Protocols', 'CS301', 'OSI model, TCP/IP stack, routing protocols, and socket programming.'),
+        (12, 3, 5, 'Network Security and Cryptography', 'CS501', 'Symmetric and asymmetric encryption, RSA, hashing, and digital signatures.'),
+        (13, 3, 6, 'Compiler Design', 'CS601', 'Lexical analysis, parsing, semantic analysis, and code generation.'),
+        (14, 1, 4, 'Cloud Computing and DevOps', 'MCA401', 'CI/CD pipelines, containerization with Docker, Kubernetes, and cloud infrastructure.'),
+        (15, 3, 4, 'Design and Analysis of Algorithms', 'CS401', 'Divide and conquer, greedy strategies, dynamic programming, and graph algorithms.');
+      `);
+    }
 
-  // Check default admin account
-  const [admins] = await pool.query("SELECT COUNT(*) AS count FROM users WHERE role = 'admin'");
-  if (admins[0].count === 0) {
-    console.log('[DB Init] Seeding default administrator account...');
-    // Seed default admin: admin@shelfshare.edu / Admin@123
-    await pool.query(`
-      INSERT INTO users (full_name, email, password_hash, college_name, course_id, semester_id, role, account_status)
-      VALUES (
-        'System Administrator',
-        'admin@shelfshare.edu',
-        '$2b$10$JT1G8COkWhwOwVCIFe703.hweBvdafolgDq0fzdYFfrdwMVdqJTTK',
-        'National Institute of Technology',
-        1, 4, 'admin', 'active'
-      );
-    `);
+    // Check default admin account
+    const [admins] = await pool.query("SELECT COUNT(*) AS count FROM users WHERE role = 'admin'");
+    if (admins[0].count === 0) {
+      console.log('[DB Init] Seeding default administrator account...');
+      await pool.query(`
+        INSERT INTO users (full_name, email, password_hash, college_name, course_id, semester_id, role, account_status)
+        VALUES (
+          'System Administrator',
+          'admin@shelfshare.edu',
+          '$2b$10$JT1G8COkWhwOwVCIFe703.hweBvdafolgDq0fzdYFfrdwMVdqJTTK',
+          'National Institute of Technology',
+          1, 4, 'admin', 'active'
+        );
+      `);
+    }
+  } catch (err) {
+    console.error('[DB Init Seeding Error]', err.message);
   }
 
   console.log('[DB Init] Database schema verification completed successfully.');

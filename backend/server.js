@@ -88,8 +88,43 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(cookieParser(process.env.COOKIE_SECRET || 'shelfshare_cookie_secret_key_2026'));
 
-// Root Endpoint - Identifies API and directs to documentation and health
+// Ensure database tables and initial data exist in serverless environments
+let dbInitPromise = null;
+function ensureDatabaseReady() {
+  if (!dbInitPromise && process.env.AUTO_INIT_DB !== 'false') {
+    dbInitPromise = initializeDatabase().catch((err) => {
+      console.warn('[Auto DB Init Notice]', err.message);
+      dbInitPromise = null;
+    });
+  }
+  return dbInitPromise;
+}
+
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api') || req.path === '/health' || req.path === '/api/health') {
+    try {
+      await ensureDatabaseReady();
+    } catch (e) {
+      // Continue even if init failed, let individual route handler report
+    }
+  }
+  next();
+});
+
+// Serve Frontend static assets if built
+const fs = require('fs');
+const distPath = path.join(__dirname, '../frontend/dist');
+const hasFrontendDist = fs.existsSync(distPath);
+
+if (hasFrontendDist) {
+  app.use(express.static(distPath));
+}
+
+// Root Endpoint - Serves Frontend if built, otherwise identifies API
 app.get('/', (req, res) => {
+  if (hasFrontendDist) {
+    return res.sendFile(path.join(distPath, 'index.html'));
+  }
   res.status(200).json({
     success: true,
     name: 'ShelfShare – Student Academic Resource Sharing API',
@@ -141,6 +176,16 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', userRoutes);
+
+// Client-side SPA routing fallback for non-API GET requests
+if (hasFrontendDist) {
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path === '/health' || req.path === '/api/health') {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 // 404 Route Handler
 app.use((req, res, next) => {
