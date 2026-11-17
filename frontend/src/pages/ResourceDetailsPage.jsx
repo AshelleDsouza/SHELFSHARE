@@ -50,6 +50,9 @@ export default function ResourceDetailsPage() {
 
   // PDF Preview Modal State
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewBlobUrl, setPreviewBlobUrl] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState(null);
 
   // Review Form State
   const [userRating, setUserRating] = useState(5);
@@ -104,6 +107,43 @@ export default function ResourceDetailsPage() {
     } catch (err) {
       showToast(err.message || 'Failed to toggle bookmark.', 'error');
     }
+  };
+
+  // Open preview: fetch PDF buffer via Axios (carries JWT if logged in), create blob URL for iframe
+  const handlePreview = async () => {
+    setPreviewError(null);
+    setPreviewLoading(true);
+    setPreviewOpen(true);
+
+    try {
+      const response = await api.get(`/resources/${id}/preview?t=${Date.now()}`, {
+        responseType: 'blob',
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      setPreviewBlobUrl(url);
+    } catch (err) {
+      let msg = 'Failed to load document preview.';
+      if (err.response && err.response.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const parsed = JSON.parse(text);
+          if (parsed.message) msg = parsed.message;
+        } catch (_) {}
+      }
+      setPreviewError(msg);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const handleClosePreview = () => {
+    setPreviewOpen(false);
+    if (previewBlobUrl) {
+      window.URL.revokeObjectURL(previewBlobUrl);
+      setPreviewBlobUrl(null);
+    }
+    setPreviewError(null);
   };
 
   const handleDownload = async () => {
@@ -235,7 +275,6 @@ export default function ResourceDetailsPage() {
 
   const isPdf = resource.file_type?.toLowerCase() === 'pdf';
   const apiBase = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '');
-  const previewUrl = `${apiBase}/resources/${id}/preview?t=${encodeURIComponent(resource.updated_at || Date.now())}`;
 
   return (
     <div style={styles.page}>
@@ -301,7 +340,7 @@ export default function ResourceDetailsPage() {
           {/* Action Buttons Bar */}
           <div style={styles.actionBar}>
             {isPdf ? (
-              <button onClick={() => setPreviewOpen(true)} style={styles.previewBtn}>
+              <button onClick={handlePreview} style={styles.previewBtn}>
                 <Eye size={18} />
                 <span>Preview PDF in Viewer</span>
               </button>
@@ -567,19 +606,55 @@ export default function ResourceDetailsPage() {
                     <Download size={15} />
                     <span>Download</span>
                   </button>
-                  <button onClick={() => setPreviewOpen(false)} style={styles.closeBtn}>
+                  {previewBlobUrl && (
+                    <a
+                      href={previewBlobUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={styles.modalDownloadBtn}
+                    >
+                      <Eye size={15} />
+                      <span>Open Full Screen</span>
+                    </a>
+                  )}
+                  <button onClick={handleClosePreview} style={styles.closeBtn}>
                     <X size={22} />
                   </button>
                 </div>
               </div>
 
-              {/* Embedded PDF Viewer */}
+              {/* Embedded PDF Viewer — Blob URL eliminates cross-origin iframe block */}
               <div style={styles.pdfViewerContainer}>
-                <iframe
-                  src={previewUrl}
-                  title="PDF Document Viewer"
-                  style={styles.pdfIframe}
-                />
+                {previewLoading && (
+                  <div style={styles.previewState}>
+                    <div style={styles.spinner} />
+                    <p style={{ marginTop: '1rem', color: 'var(--text-secondary)' }}>
+                      Loading document...
+                    </p>
+                  </div>
+                )}
+                {previewError && !previewLoading && (
+                  <div style={styles.previewState}>
+                    <AlertTriangle size={40} color="var(--error)" />
+                    <p style={{ marginTop: '1rem', color: 'var(--error)', fontWeight: 600 }}>
+                      {previewError}
+                    </p>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
+                      Please try downloading the document instead.
+                    </p>
+                    <button onClick={handleDownload} style={{ ...styles.downloadBtn, marginTop: '1rem' }}>
+                      <Download size={16} />
+                      <span>Download Document</span>
+                    </button>
+                  </div>
+                )}
+                {previewBlobUrl && !previewLoading && !previewError && (
+                  <iframe
+                    src={previewBlobUrl}
+                    title="PDF Document Viewer"
+                    style={styles.pdfIframe}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -1144,11 +1219,26 @@ const styles = {
     width: '100%',
     height: '100%',
     backgroundColor: '#525659',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  previewState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '3rem',
+    color: 'var(--text-secondary)',
+    textAlign: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: '8px',
   },
   pdfIframe: {
     width: '100%',
     height: '100%',
     border: 'none',
+    display: 'block',
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
