@@ -157,22 +157,29 @@ export default function ResourceDetailsPage() {
       setDownloading(true);
       const response = await api.get(`/resources/${id}/download?t=${Date.now()}`, {
         responseType: 'blob',
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-        },
       });
       const contentType = response.headers['content-type'] || 'application/pdf';
       const blob = new Blob([response.data], { type: contentType });
       const blobUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = blobUrl;
-      const fileName = resource.file_name || 'document.pdf';
+
+      // Extract filename from header or fallback
+      let fileName = resource.file_name || 'document.pdf';
+      const disposition = response.headers['content-disposition'];
+      if (disposition && disposition.includes('filename=')) {
+        const match = disposition.match(/filename="?([^";]+)"?/);
+        if (match && match[1]) fileName = match[1];
+      }
+      if (!fileName.toLowerCase().endsWith('.pdf') && contentType.includes('pdf')) {
+        fileName = `${fileName}.pdf`;
+      }
+
       link.setAttribute('download', fileName);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      window.URL.revokeObjectURL(blobUrl);
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 2000);
 
       showToast('Download started successfully!', 'success');
       // Increment local count

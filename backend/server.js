@@ -50,39 +50,46 @@ const defaultOrigins = [
 
 const allowedOrigins = [...new Set([...configuredOrigins, ...defaultOrigins])];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, or same-origin)
-      if (!origin) return callback(null, true);
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or same-origin)
+    if (!origin) return callback(null, true);
 
-      const cleanOrigin = origin.replace(/\/+$/, '');
+    const cleanOrigin = origin.replace(/\/+$/, '');
 
-      // Direct match in allowed list
-      if (allowedOrigins.includes(cleanOrigin)) {
-        return callback(null, true);
-      }
+    // Direct match in allowed list or localhost / Vercel domain
+    if (
+      allowedOrigins.includes(cleanOrigin) ||
+      cleanOrigin.endsWith('.vercel.app') ||
+      cleanOrigin.includes('localhost') ||
+      cleanOrigin.includes('127.0.0.1') ||
+      process.env.ALLOW_ALL_VERCEL_PREVIEWS === 'true' ||
+      process.env.VERCEL
+    ) {
+      return callback(null, true);
+    }
 
-      // Allow any Vercel preview deployment for this project if on Vercel
-      if (
-        process.env.ALLOW_ALL_VERCEL_PREVIEWS === 'true' ||
-        process.env.VERCEL ||
-        cleanOrigin.endsWith('.vercel.app')
-      ) {
-        return callback(null, true);
-      }
+    return callback(null, false);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Cache-Control',
+    'Pragma',
+    'Origin',
+    'Range',
+  ],
+  exposedHeaders: ['Content-Disposition', 'Content-Length', 'Content-Type'],
+};
 
-      return callback(new Error(`Blocked by CORS policy for origin: ${origin}`));
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    exposedHeaders: ['Content-Disposition'],
-  })
-);
+app.use(cors(corsOptions));
 
-// Handle preflight OPTIONS requests across all routes
-app.options('*', cors());
+// Handle preflight OPTIONS requests across all routes with identical CORS config
+app.options('*', cors(corsOptions));
 
 // Body and Cookie Parsers
 app.use(express.json({ limit: '10mb' }));
