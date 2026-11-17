@@ -59,6 +59,9 @@ async function previewResource(req, res) {
       return res.redirect(resource.file_path);
     }
 
+    // Generate authoritative, comprehensive academic PDF
+    const pdfBuf = await createAcademicPdfBuffer(resource);
+
     // Set frame-ancestors to permit in-app iframe previews from frontend
     res.removeHeader('X-Frame-Options');
     res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.vercel.app http://localhost:*");
@@ -67,14 +70,14 @@ async function previewResource(req, res) {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-
-    // Generate authoritative, comprehensive academic PDF
-    const pdfBuf = await createAcademicPdfBuffer(resource);
     res.setHeader('Content-Length', pdfBuf.length);
     return res.end(pdfBuf);
   } catch (error) {
     console.error('[Preview Resource Error]', error);
-    return res.status(500).json({ success: false, message: 'Error streaming document preview.' });
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Error streaming document preview.',
+    });
   }
 }
 
@@ -146,7 +149,7 @@ async function downloadResource(req, res) {
     console.error('[Download Resource Error]', error);
     return res.status(500).json({
       success: false,
-      message: 'Failed to process download request.',
+      message: error.message || 'Failed to process download request.',
     });
   }
 }

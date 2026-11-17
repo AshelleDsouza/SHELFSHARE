@@ -8,7 +8,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "includeFiles": "uploads/**"
+      "includeFiles": "{uploads/**,node_modules/pdfkit/js/data/**,node_modules/pdfkit/js/**}"
     }
   }
 }

@@ -1,4 +1,17 @@
-const PDFDocument = require('pdfkit');
+const path = require('path');
+
+// Use standalone PDFKit build that embeds all 14 standard AFM fonts
+// This prevents missing .afm file crashes in Vercel serverless / AWS Lambda environments
+let PDFDocument;
+try {
+  PDFDocument = require(path.resolve(__dirname, '../node_modules/pdfkit/js/pdfkit.standalone.js'));
+} catch (e1) {
+  try {
+    PDFDocument = require('pdfkit/js/pdfkit.standalone.js');
+  } catch (e2) {
+    PDFDocument = require('pdfkit');
+  }
+}
 
 /**
  * Academic Document Generator Service — ShelfShare
