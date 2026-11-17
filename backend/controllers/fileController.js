@@ -64,7 +64,9 @@ async function previewResource(req, res) {
     res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://*.vercel.app http://localhost:*");
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `inline; filename="${resource.file_name || 'document.pdf'}"`);
-    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
 
     // Generate authoritative, comprehensive academic PDF
     const pdfBuf = await createAcademicPdfBuffer(resource);
@@ -135,6 +137,9 @@ async function downloadResource(req, res) {
       ? resource.file_name
       : `${resource.file_name || 'document'}.pdf`;
     res.setHeader('Content-Disposition', `attachment; filename="${downloadName}"`);
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
     res.setHeader('Content-Length', pdfBuf.length);
     return res.end(pdfBuf);
   } catch (error) {

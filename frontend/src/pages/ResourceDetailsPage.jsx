@@ -115,7 +115,13 @@ export default function ResourceDetailsPage() {
 
     try {
       setDownloading(true);
-      const response = await api.get(`/resources/${id}/download`, { responseType: 'blob' });
+      const response = await api.get(`/resources/${id}/download?t=${Date.now()}`, {
+        responseType: 'blob',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+      });
       const contentType = response.headers['content-type'] || 'application/pdf';
       const blob = new Blob([response.data], { type: contentType });
       const blobUrl = window.URL.createObjectURL(blob);
@@ -229,7 +235,7 @@ export default function ResourceDetailsPage() {
 
   const isPdf = resource.file_type?.toLowerCase() === 'pdf';
   const apiBase = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/+$/, '');
-  const previewUrl = `${apiBase}/resources/${id}/preview`;
+  const previewUrl = `${apiBase}/resources/${id}/preview?t=${encodeURIComponent(resource.updated_at || Date.now())}`;
 
   return (
     <div style={styles.page}>
